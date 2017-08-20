@@ -1,0 +1,13 @@
+.top-panel-container {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.25rem;
+}
+
+button:focus {
+  outline: none;
+}
+
+button:disabled {
+  color: #b7b7b7;
+}
