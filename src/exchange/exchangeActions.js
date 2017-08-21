@@ -13,7 +13,6 @@ export function sellAmount(amount) {
 }
 
 export function sellCurrency(name) {
-  console.log('sellCurrency', name);
   return { type: XCHANGE_SET_SELL_CURRENCY, name };
 }
 

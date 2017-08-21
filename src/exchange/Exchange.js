@@ -42,23 +42,23 @@ const mapDispatchToProps = dispatch => {
 };
 
 export class Exchange extends Component {
+  componentWillMount() {
+    // this.props.updateRates();
+    // this.pollId = setInterval(() => {
+    //   this.props.updateRates();
+    // }, config.pollIntervalMs);
+  }
+
+  compnentWillUnmount() {
+    clearInterval(this.pollId);
+  }
+
   get sellCurrencyTotalAmount() {
     return this.currencyTotalAmount(this.props.sellCurrencyName);
   }
 
   get buyCurrencyTotalAmount() {
     return this.currencyTotalAmount(this.props.buyCurrencyName);
-  }
-
-  ratioFor(buy, sell) {
-    return this.props.rates
-      ? this.props.rates[buy]
-        / this.props.rates[sell]
-      : 0;
-  }
-
-  exchangeAmountFor(buy, sell) {
-    return this.props.sellCurrencyAmount * this.ratioFor(buy, sell);
   }
 
   get exchangeDisabled() {
@@ -71,15 +71,14 @@ export class Exchange extends Component {
     return this.props.userValet ? Object.keys(this.props.userValet).sort() : [];
   }
 
-  componentWillMount() {
-    // this.props.updateRates();
-    // this.pollId = setInterval(() => {
-    //   this.props.updateRates();
-    // }, config.pollIntervalMs);
+  ratioFor(buy, sell) {
+    return this.props.rates
+      ? this.props.rates[buy] / this.props.rates[sell]
+      : 0;
   }
 
-  compnentWillUnmount() {
-    clearInterval(this.pollId);
+  exchangeAmountFor(buy, sell) {
+    return this.props.sellCurrencyAmount * this.ratioFor(buy, sell);
   }
 
   exchange() {
@@ -98,13 +97,11 @@ export class Exchange extends Component {
 
   onToChange(idx) {
     const name = this.allCurrencies[idx];
-    console.log('onToChange', idx, name);
     this.props.setCurrencyBuy(name);
   }
 
   onFromChange(idx) {
     const name = this.allCurrencies[idx];
-    console.log('onFromChange', idx, name);
     this.props.setCurrencySell(name);
   }
 
@@ -138,6 +135,7 @@ export class Exchange extends Component {
   render() {
     return (
       <div className="exchange-container">
+
         <TopPanel
           currencyName={this.props.buyCurrencyName}
           currencyFromName={this.props.sellCurrencyName}
@@ -146,6 +144,7 @@ export class Exchange extends Component {
           onExchange={() => this.exchange()}
           onCancel={() => this.cancel()}
         />
+
         <Swipeable
           className="container-from"
           currencies={this.allCurrencies}
@@ -153,13 +152,16 @@ export class Exchange extends Component {
           onChange={name => this.onFromChange(name)}>
           { this.allCurrencies.map(curr => this.renderFromSlot(curr)) }
         </Swipeable>
+
         <div className="divider"></div>  
+
         <Swipeable
           currencies={this.allCurrencies}
           currencyName={this.props.buyCurrencyName}
           onChange={name => this.onToChange(name)}>
           { this.allCurrencies.map(curr => this.renderToSlot(curr)) }
         </Swipeable>
+
       </div>
     );
   }

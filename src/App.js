@@ -15,7 +15,7 @@ const mapDispatchToProps = dispatch => {
 };
 
 class App extends Component {
-  componentDidMount() {
+  componentWillMount() {
     this.props.loadUserValet();
   }
 

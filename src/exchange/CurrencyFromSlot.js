@@ -3,11 +3,8 @@ import React, { Component } from 'react';
 import Currency from './Currency';
 
 export default class CurrencyFromSlot extends Component {
-  constructor() {
-    super();
-    this.state = {
-      inputSize: '0px'
-    };
+  componentWillMount() {
+    this.setState({inputSize: '0px'})
   }
 
   get inputSize() {
@@ -26,18 +23,12 @@ export default class CurrencyFromSlot extends Component {
   }
 
   handleInputChange(event) {
-    let val = +(event.target.value);
-    val = !isNaN(val) ? val : '';
-    this.adjustInputWidth();
     if (this.props.onAmountChange) {
+      let val = +(event.target.value);
+      val = !isNaN(val) ? val : '';
       this.props.onAmountChange(val);
     }
-    // if (!isNaN(val)) {
-    //   this.adjustInputWidth();
-    //   if (this.props.onAmountChange) {
-    //     this.props.onAmountChange(val);
-    //   }
-    // }
+    this.adjustInputWidth();
   }
 
   adjustInputWidth() {

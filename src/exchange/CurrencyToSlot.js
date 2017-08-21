@@ -4,8 +4,7 @@ import { fomatCurrencyValue, currencySymbols } from './currency-helpers';
 import Currency from './Currency';
 
 export default class CurrencyToSlot extends Component {
-  constructor() {
-    super();
+  componentWillMount() {
     this.currencySymbols = currencySymbols;
   }
 
@@ -32,10 +31,12 @@ export default class CurrencyToSlot extends Component {
   render() {
     return (
       <div className="currency-slot-container to-currency">
+
         <Currency
           currencyName={this.props.currencyName}
           currencyTotalAmount={this.props.currencyTotalAmount}>
         </Currency>
+
         <div className="exchange-result-container">
           <div
             className="exchange-result"
@@ -44,6 +45,7 @@ export default class CurrencyToSlot extends Component {
           </div>
           {this.ratio()}
         </div>
+
       </div>
     );
   }

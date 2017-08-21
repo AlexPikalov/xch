@@ -6,7 +6,7 @@ import {
 } from './exchangeActions';
 
 const sellCurrencyName = 'USD';
-const buyCurrencyName = 'USD';
+const buyCurrencyName = 'EUR';
 
 export function exchangeReducer(
   state = { sellCurrencyName, buyCurrencyName },
