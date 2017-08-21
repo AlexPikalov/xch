@@ -8,8 +8,7 @@ export const currencySymbols = {
 export const defaultCurrencySymbol = '';
 
 export function fomatCurrencyValue(amount = 0, currency = null) {
-  const symbol = currencySymbols[currency]
-      || defaultCurrencySymbol;
-  amount = amount ? amount.toFixed(2) : '0';
+  const symbol = currencySymbols[currency] || defaultCurrencySymbol;
+  amount = amount ? amount.toFixed(2) : '';
   return `${symbol}${amount}`;
 }

@@ -2,8 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
 import TopPanel from './TopPanel';
-import CurrencyFromSlot from './CurrencyFromSlot';
-import CurrencyToSlot from './CurrencyToSlot';
+import CurrencySlot from './CurrencySlot';
 import { Swipeable } from './Swipeable';
 import {
   sellAmount as updateSellAmount,
@@ -44,9 +43,9 @@ const mapDispatchToProps = dispatch => {
 export class Exchange extends Component {
   componentWillMount() {
     this.props.updateRates();
-    this.pollId = setInterval(() => {
-      this.props.updateRates();
-    }, config.pollIntervalMs);
+    // this.pollId = setInterval(() => {
+    //   this.props.updateRates();
+    // }, config.pollIntervalMs);
   }
 
   compnentWillUnmount() {
@@ -72,13 +71,12 @@ export class Exchange extends Component {
   }
 
   ratioFor(buy, sell) {
-    return this.props.rates
-      ? this.props.rates[buy] / this.props.rates[sell]
-      : 0;
+    return this.props.rates ? this.props.rates[buy] / this.props.rates[sell] : 0;
   }
 
   exchangeAmountFor(buy, sell) {
-    return this.props.sellCurrencyAmount * this.ratioFor(buy, sell);
+    // keep up to two digits after decimal point
+    return Math.floor(this.props.sellCurrencyAmount * this.ratioFor(buy, sell) * 100) / 100;
   }
 
   exchange() {
@@ -91,8 +89,14 @@ export class Exchange extends Component {
     this.props.updateSellAmount(0);
   }
 
-  onAmountChange(newAmount) {
+  onSellAmountChange(newAmount) {
     this.props.updateSellAmount(newAmount);
+  }
+
+  onBuyAmountChange(newAmount) {
+    const sellAmount = newAmount
+      / this.ratioFor(this.props.buyCurrencyName, this.props.sellCurrencyName);
+    this.onSellAmountChange(sellAmount);
   }
 
   onToChange(idx) {
@@ -106,30 +110,31 @@ export class Exchange extends Component {
   }
 
   currencyTotalAmount(name) {
-    return this.props.userValet
-      ? (this.props.userValet[name] || 0)
-      : 0
+    return this.props.userValet ? (this.props.userValet[name] || 0) : 0
   }
 
   renderToSlot(currency) {
-    return <CurrencyToSlot
-            key={currency}
-            currencyName={currency}
-            currencyFromName={this.props.sellCurrencyName}
-            currencyTotalAmount={this.buyCurrencyTotalAmount}
-            exchangeAmount={this.exchangeAmountFor(currency, this.props.sellCurrencyName)}
-            currencyRatio={this.ratioFor(currency, this.props.sellCurrencyName)}
-          />;
+    return <CurrencySlot
+              key={currency}
+              currencyName={currency}
+              sellingInput={false}
+              currencyFromName={this.props.sellCurrencyName}
+              currencyTotalAmount={this.buyCurrencyTotalAmount}
+              amount={this.exchangeAmountFor(currency, this.props.sellCurrencyName)}
+              onAmountChange={amount => this.onBuyAmountChange(amount)}
+              currencyRatio={this.ratioFor(currency, this.props.sellCurrencyName)}
+            />;
   }
 
   renderFromSlot(currency) {
-    return <CurrencyFromSlot
-          key={currency}
-          currencyName={currency}
-          currencyTotalAmount={this.sellCurrencyTotalAmount}
-          sellCurrencyAmount={this.props.sellCurrencyAmount}
-          onAmountChange={amount => this.onAmountChange(amount)}
-        />;
+    return <CurrencySlot
+              key={currency}
+              currencyName={currency}
+              sellingInput={true}
+              currencyTotalAmount={this.sellCurrencyTotalAmount}
+              amount={this.props.sellCurrencyAmount}
+              onAmountChange={amount => this.onSellAmountChange(amount)}
+            />;
   }
 
   render() {
