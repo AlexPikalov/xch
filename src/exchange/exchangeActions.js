@@ -6,6 +6,8 @@ export const XCHANGE_SET_SELL_CURRENCY = 'EXCHANGE.SET_SELL_CURRENCY';
 
 export const XCHANGE_SET_BUY_CURRENCY = 'EXCHANGE.SET_BUY_CURRENCY';
 
+export const XCHANGE_SET_BUY_AMOUNT = 'EXCHANGE.SET_BUY_AMOUNT';
+
 export const XCHANGE_SET_RATES = 'EXCHANGE.SET_RATES';
 
 export function sellAmount(amount) {
@@ -18,6 +20,10 @@ export function sellCurrency(name) {
 
 export function buyCurrency(name) {
   return { type: XCHANGE_SET_BUY_CURRENCY, name };
+}
+
+export function buyAmount(amount) {
+  return { type: XCHANGE_SET_BUY_AMOUNT, amount };
 }
 
 export function setRates(rates) {

@@ -41,7 +41,7 @@ export default class CurrencyToSlot extends Component {
 
   render() {
     return (
-      <div className={'currency-slot-container '+ this.typeClass(this.props.sellingInput)}
+      <div className={'currency-slot-container ' + this.typeClass(this.props.sellingInput)}
         onClick={() => this.input.focus()}>
 
         <Currency

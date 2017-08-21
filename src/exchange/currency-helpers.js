@@ -12,3 +12,7 @@ export function fomatCurrencyValue(amount = 0, currency = null) {
   amount = amount ? amount.toFixed(2) : '';
   return `${symbol}${amount}`;
 }
+
+export function roundValue(value) {
+  return Math.round(value * 100) / 100;
+}

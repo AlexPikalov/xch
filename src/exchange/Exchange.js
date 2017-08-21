@@ -4,14 +4,17 @@ import { connect } from 'react-redux';
 import TopPanel from './TopPanel';
 import CurrencySlot from './CurrencySlot';
 import { Swipeable } from './Swipeable';
+import { ExchangeValidationRules } from './ExchangeValidationRules';
 import {
   sellAmount as updateSellAmount,
   updateRates,
   buyCurrency,
-  sellCurrency
+  sellCurrency,
+  buyAmount
 } from './exchangeActions';
 import { makeExchange } from '../shared/user/userActions';
 import config from '../shared/config';
+import { roundValue } from './currency-helpers';
 
 import './Exchange.css';
 
@@ -21,6 +24,7 @@ const mapStateToProps = state => {
     sellCurrencyAmount: state.exchange.sellCurrencyAmount,
     userValet: state.user.walet,
     buyCurrencyName: state.exchange.buyCurrencyName,
+    buyCurrencyAmount: state.exchange.buyCurrencyAmount,
     rates: state.exchange.currencyRates
   };
 };
@@ -28,6 +32,7 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
   return {
     updateSellAmount: amount => dispatch(updateSellAmount(amount)),
+    updateBuyAmount: amount => dispatch(buyAmount(amount)),
     updateRates: () => {
       const url = `${config.exchangeApiUrl}?app_id=${config.appId}`
       dispatch(updateRates(url));
@@ -47,9 +52,9 @@ const mapDispatchToProps = dispatch => {
 export class Exchange extends Component {
   componentWillMount() {
     this.props.updateRates();
-    // this.pollId = setInterval(() => {
-    //   this.props.updateRates();
-    // }, config.pollIntervalMs);
+    this.pollId = setInterval(() => {
+      this.props.updateRates();
+    }, config.pollIntervalMs);
   }
 
   compnentWillUnmount() {
@@ -65,9 +70,19 @@ export class Exchange extends Component {
   }
 
   get exchangeDisabled() {
-    return !this.props.sellCurrencyAmount
-      || this.props.sellCurrencyName === this.props.buyCurrencyName
-      || this.props.sellCurrencyAmount > this.sellCurrencyTotalAmount;
+    const validationRules = [
+      ExchangeValidationRules.isNumerical(this.props.sellCurrencyAmount),
+      ExchangeValidationRules.isLessOrEqual(
+        this.props.sellCurrencyAmount,
+        this.sellCurrencyTotalAmount
+      ),
+      ExchangeValidationRules.notZero(this.props.buyCurrencyAmount),
+      ExchangeValidationRules.notSame(
+        this.props.sellCurrencyName,
+        this.props.buyCurrencyName
+      )
+    ];
+    return ExchangeValidationRules.validate(validationRules).length > 0;
   }
 
   get allCurrencies() {
@@ -78,11 +93,6 @@ export class Exchange extends Component {
     return this.props.rates ? this.props.rates[buy] / this.props.rates[sell] : 0;
   }
 
-  exchangeAmountFor(buy, sell) {
-    // keep up to two digits after decimal point
-    return Math.floor(this.props.sellCurrencyAmount * this.ratioFor(buy, sell) * 100) / 100;
-  }
-
   exchange() {
     const exchange = {
       sell: {
@@ -91,7 +101,7 @@ export class Exchange extends Component {
       },
       buy: {
         name: this.props.buyCurrencyName,
-        amount: this.exchangeAmountFor(this.props.buyCurrencyName, this.props.sellCurrencyName)
+        amount: this.props.buyCurrencyAmount
       }
     };
     this.props.makeExchange(exchange);
@@ -100,26 +110,40 @@ export class Exchange extends Component {
 
   cancel() {
     this.props.updateSellAmount(0);
+    this.props.updateBuyAmount(0);
   }
 
   onSellAmountChange(newAmount) {
+    const buyAmount = newAmount
+      * this.ratioFor(this.props.buyCurrencyName, this.props.sellCurrencyName);
+
     this.props.updateSellAmount(newAmount);
+    this.props.updateBuyAmount(roundValue(buyAmount));
   }
 
   onBuyAmountChange(newAmount) {
     const sellAmount = newAmount
       / this.ratioFor(this.props.buyCurrencyName, this.props.sellCurrencyName);
-    this.onSellAmountChange(sellAmount);
+
+    this.props.updateSellAmount(roundValue(sellAmount));
+    this.props.updateBuyAmount(newAmount);
   }
 
-  onToChange(idx) {
+  onBuyNameChange(idx) {
     const name = this.allCurrencies[idx];
+    const buyAmount = this.props.sellCurrencyAmount
+      * this.ratioFor(name, this.props.sellCurrencyName);
+
     this.props.setCurrencyBuy(name);
+    this.props.updateBuyAmount(roundValue(buyAmount));
   }
 
-  onFromChange(idx) {
+  onSellNameChange(idx) {
     const name = this.allCurrencies[idx];
+    const buyAmount = this.props.sellCurrencyAmount
+      * this.ratioFor(this.props.buyCurrencyName, name);
     this.props.setCurrencySell(name);
+    this.props.updateBuyAmount(roundValue(buyAmount));
   }
 
   currencyTotalAmount(name) {
@@ -133,7 +157,7 @@ export class Exchange extends Component {
               sellingInput={false}
               currencyFromName={this.props.sellCurrencyName}
               currencyTotalAmount={this.buyCurrencyTotalAmount}
-              amount={this.exchangeAmountFor(currency, this.props.sellCurrencyName)}
+              amount={this.props.buyCurrencyAmount}
               onAmountChange={amount => this.onBuyAmountChange(amount)}
               currencyRatio={1 / this.ratioFor(currency, this.props.sellCurrencyName)}
             />;
@@ -167,7 +191,7 @@ export class Exchange extends Component {
           className="container-from"
           currencies={this.allCurrencies}
           currencyName={this.props.sellCurrencyName}
-          onChange={name => this.onFromChange(name)}>
+          onChange={name => this.onSellNameChange(name)}>
           { this.allCurrencies.map(curr => this.renderFromSlot(curr)) }
         </Swipeable>
 
@@ -176,7 +200,7 @@ export class Exchange extends Component {
         <Swipeable
           currencies={this.allCurrencies}
           currencyName={this.props.buyCurrencyName}
-          onChange={name => this.onToChange(name)}>
+          onChange={name => this.onBuyNameChange(name)}>
           { this.allCurrencies.map(curr => this.renderToSlot(curr)) }
         </Swipeable>
 

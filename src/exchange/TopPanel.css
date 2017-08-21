@@ -8,6 +8,10 @@
   color: white;
 }
 
+.btn.btn-link:focus {
+  outline: none;
+}
+
 .btn.btn-link:disabled,
 .btn.btn-link:hover {
   color: #b7b7b7;
