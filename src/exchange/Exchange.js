@@ -43,10 +43,10 @@ const mapDispatchToProps = dispatch => {
 
 export class Exchange extends Component {
   componentWillMount() {
-    // this.props.updateRates();
-    // this.pollId = setInterval(() => {
-    //   this.props.updateRates();
-    // }, config.pollIntervalMs);
+    this.props.updateRates();
+    this.pollId = setInterval(() => {
+      this.props.updateRates();
+    }, config.pollIntervalMs);
   }
 
   compnentWillUnmount() {
@@ -140,7 +140,7 @@ export class Exchange extends Component {
           currencyName={this.props.buyCurrencyName}
           currencyFromName={this.props.sellCurrencyName}
           exchangeDisabled={this.exchangeDisabled}
-          currencyRatio={this.ratio}
+          currencyRatio={this.ratioFor(this.props.buyCurrencyName, this.props.sellCurrencyName)}
           onExchange={() => this.exchange()}
           onCancel={() => this.cancel()}
         />
