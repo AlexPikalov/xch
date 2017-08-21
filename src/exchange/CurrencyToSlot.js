@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 
 import { fomatCurrencyValue, currencySymbols } from './currency-helpers';
 import Currency from './Currency';
+import { Input } from './Input';
 
 export default class CurrencyToSlot extends Component {
   componentWillMount() {
@@ -10,7 +11,7 @@ export default class CurrencyToSlot extends Component {
 
   get formattedResult() {
     const currencySymbol = null;
-    return `+${fomatCurrencyValue(this.props.exchangeAmount, currencySymbol)}`;
+    return this.props.exchangeAmount ? `${fomatCurrencyValue(this.props.exchangeAmount, currencySymbol)}` : '';
   }
 
   resultStyles() {
@@ -28,9 +29,16 @@ export default class CurrencyToSlot extends Component {
     );
   }
 
+  handleInputChange(value) {
+    if (this.props.onAmountChange) {
+      this.props.onAmountChange(value);
+    }
+  }
+
   render() {
     return (
-      <div className="currency-slot-container to-currency">
+      <div className="currency-slot-container to-currency"
+        onClick={() => this.input.focus()}>
 
         <Currency
           currencyName={this.props.currencyName}
@@ -38,11 +46,13 @@ export default class CurrencyToSlot extends Component {
         </Currency>
 
         <div className="exchange-result-container">
-          <div
-            className="exchange-result"
-            style={this.resultStyles()}>
-            {this.formattedResult}
-          </div>
+          <Input
+            ref={input => this.input = input}
+            autoFocus={true}
+            sellingInput={false}
+            currencyAmount={this.props.exchangeAmount}
+            onChange={event => this.handleInputChange(event)}
+          />
           { this.renderRatio() }
         </div>
 

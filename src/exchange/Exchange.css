@@ -34,11 +34,11 @@
   border-top: 2rem solid #2F71E4; 
 }
 
-.from-currency-input {
+.currency-input {
    text-align: right;
 }
 
-.from-currency-input input {
+.currency-input input {
   background: transparent;
   border: none;
   padding: 0;
@@ -54,7 +54,7 @@
 
 .exchange-result,
 .currency-name,
-.from-currency-input,
+.currency-input,
 .fake-input {
   font-size: xx-large;
 }

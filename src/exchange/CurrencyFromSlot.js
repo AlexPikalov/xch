@@ -1,40 +1,33 @@
 import React, { Component } from 'react';
+import { fomatCurrencyValue } from './currency-helpers'
 
 import Currency from './Currency';
+import { Input } from './Input';
 
 const MIN_INPUT_SIZE_PX = 2;
 
 export default class CurrencyFromSlot extends Component {
   componentWillMount() {
     const minSize = `${MIN_INPUT_SIZE_PX}px`;
-    this.setState({inputSize: minSize})
+    this.state = { inputSize: minSize };
   }
 
-  get inputSize() {
-    const el = this.fakeInputEl;
-    return `${el ? el.offsetWidth || MIN_INPUT_SIZE_PX : MIN_INPUT_SIZE_PX}px`;
+  componentDidMount() {
+    this.input.focus();
   }
 
-  fakeInput() {
-    // use this input in order to calculate input's minimal width
-    return <div
-      className="fake-input"
-      ref={fakeInputEl => this.fakeInputEl = fakeInputEl}>
-        {this.props.sellCurrencyAmount > 0 ? this.props.sellCurrencyAmount : '' }
-    </div>;
+  resultStyles() {
+    const visibility = this.props.exchangeAmount ? 'visible' : 'hidden';
+    return { visibility };
   }
 
-  handleInputChange(event) {
-    if (this.props.onAmountChange) {
-      let val = +(event.target.value);
-      val = !isNaN(val) ? val : '';
-      this.props.onAmountChange(val);
-    }
-    this.adjustInputWidth();
+  get formattedResult() {
+    const currencySymbol = null;
+    return this.props.exchangeAmount ? `${fomatCurrencyValue(this.props.exchangeAmount, currencySymbol)}` : '';
   }
 
-  adjustInputWidth() {
-    setTimeout(() => this.forceUpdate());
+  handleInputChange(value) {
+    this.props.onAmountChange(value);
   }
 
   render() {
@@ -42,21 +35,18 @@ export default class CurrencyFromSlot extends Component {
       <div className="currency-slot-container from-currency"
         onClick={() => this.input.focus()}>
 
-        { this.fakeInput() }
-
         <Currency
           currencyName={this.props.currencyName}
           currencyTotalAmount={this.props.currencyTotalAmount}
         />
 
-        <div className="from-currency-input">
-          { this.props.sellCurrencyAmount ? '-' : '' }
-          <input type="number"
-            autoFocus={true}
+        <div className="exchange-result-container">
+          <Input
             ref={input => this.input = input}
-            value={this.props.sellCurrencyAmount || ''}
-            style={{width: this.inputSize}}
-            onChange={event => this.handleInputChange(event)} />
+            sellingInput={true}
+            currencyAmount={this.props.sellCurrencyAmount}
+            onChange={event => this.handleInputChange(event)}
+          />
         </div>
 
       </div>
