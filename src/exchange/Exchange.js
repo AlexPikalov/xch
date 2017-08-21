@@ -2,8 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
 import TopPanel from './TopPanel';
-import CurrencyFromSlot from './CurrencyFromSlot';
-import CurrencyToSlot from './CurrencyToSlot';
+import CurrencySlot from './CurrencySlot';
 import { Swipeable } from './Swipeable';
 import {
   sellAmount as updateSellAmount,
@@ -115,23 +114,25 @@ export class Exchange extends Component {
   }
 
   renderToSlot(currency) {
-    return <CurrencyToSlot
+    return <CurrencySlot
               key={currency}
               currencyName={currency}
+              sellingInput={false}
               currencyFromName={this.props.sellCurrencyName}
               currencyTotalAmount={this.buyCurrencyTotalAmount}
-              exchangeAmount={this.exchangeAmountFor(currency, this.props.sellCurrencyName)}
+              amount={this.exchangeAmountFor(currency, this.props.sellCurrencyName)}
               onAmountChange={amount => this.onBuyAmountChange(amount)}
               currencyRatio={this.ratioFor(currency, this.props.sellCurrencyName)}
             />;
   }
 
   renderFromSlot(currency) {
-    return <CurrencyFromSlot
+    return <CurrencySlot
               key={currency}
               currencyName={currency}
+              sellingInput={true}
               currencyTotalAmount={this.sellCurrencyTotalAmount}
-              sellCurrencyAmount={this.props.sellCurrencyAmount}
+              amount={this.props.sellCurrencyAmount}
               onAmountChange={amount => this.onSellAmountChange(amount)}
             />;
   }

@@ -11,11 +11,11 @@ export default class CurrencyToSlot extends Component {
 
   get formattedResult() {
     const currencySymbol = null;
-    return this.props.exchangeAmount ? `${fomatCurrencyValue(this.props.exchangeAmount, currencySymbol)}` : '';
+    return this.props.amount ? `${fomatCurrencyValue(this.props.amount, currencySymbol)}` : '';
   }
 
   resultStyles() {
-    const visibility = this.props.exchangeAmount ? 'visible' : 'hidden';
+    const visibility = this.props.amount ? 'visible' : 'hidden';
     return { visibility };
   }
 
@@ -35,9 +35,13 @@ export default class CurrencyToSlot extends Component {
     }
   }
 
+  typeClass(sellingInput) {
+    return sellingInput ? 'from-currency' : 'to-currency';
+  }
+
   render() {
     return (
-      <div className="currency-slot-container to-currency"
+      <div className={'currency-slot-container '+ this.typeClass(this.props.sellingInput)}
         onClick={() => this.input.focus()}>
 
         <Currency
@@ -48,12 +52,11 @@ export default class CurrencyToSlot extends Component {
         <div className="exchange-result-container">
           <Input
             ref={input => this.input = input}
-            autoFocus={true}
-            sellingInput={false}
-            currencyAmount={this.props.exchangeAmount}
+            sellingInput={this.props.sellingInput}
+            currencyAmount={this.props.amount}
             onChange={event => this.handleInputChange(event)}
           />
-          { this.renderRatio() }
+          { !this.props.sellingInput && this.renderRatio() }
         </div>
 
       </div>
