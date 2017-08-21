@@ -2,7 +2,8 @@ import {
   XCHANGE_SET_BUY_CURRENCY,
   XCHANGE_SET_SELL_AMOUNT,
   XCHANGE_SET_SELL_CURRENCY,
-  XCHANGE_SET_RATES
+  XCHANGE_SET_RATES,
+  XCHANGE_MAKE_EXCHANGE
 } from './exchangeActions';
 
 const sellCurrencyName = 'USD';
