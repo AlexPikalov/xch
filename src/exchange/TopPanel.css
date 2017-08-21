@@ -8,6 +8,7 @@
   color: white;
 }
 
-button:disabled {
+.btn.btn-link:disabled,
+.btn.btn-link:hover {
   color: #b7b7b7;
 }

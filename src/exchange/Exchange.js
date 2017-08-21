@@ -10,6 +10,7 @@ import {
   buyCurrency,
   sellCurrency
 } from './exchangeActions';
+import { makeExchange } from '../shared/user/userActions';
 import config from '../shared/config';
 
 import './Exchange.css';
@@ -36,6 +37,9 @@ const mapDispatchToProps = dispatch => {
     },
     setCurrencySell: currency => {
       dispatch(sellCurrency(currency));
+    },
+    makeExchange: exchange => {
+      dispatch(makeExchange(exchange))
     }
   }
 };
@@ -80,9 +84,18 @@ export class Exchange extends Component {
   }
 
   exchange() {
-    alert(`You want to exchange
-      ${this.props.sellCurrencyAmount} ${this.props.sellCurrencyName}
-      to ${this.props.buyCurrencyName}`);
+    const exchange = {
+      sell: {
+        name: this.props.sellCurrencyName,
+        amount: this.props.sellCurrencyAmount
+      },
+      buy: {
+        name: this.props.buyCurrencyName,
+        amount: this.exchangeAmountFor(this.props.buyCurrencyName, this.props.sellCurrencyName)
+      }
+    };
+    this.props.makeExchange(exchange);
+    this.cancel();
   }
 
   cancel() {
@@ -122,7 +135,7 @@ export class Exchange extends Component {
               currencyTotalAmount={this.buyCurrencyTotalAmount}
               amount={this.exchangeAmountFor(currency, this.props.sellCurrencyName)}
               onAmountChange={amount => this.onBuyAmountChange(amount)}
-              currencyRatio={this.ratioFor(currency, this.props.sellCurrencyName)}
+              currencyRatio={1 / this.ratioFor(currency, this.props.sellCurrencyName)}
             />;
   }
 

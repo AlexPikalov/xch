@@ -5,23 +5,24 @@ export function userReducer(state = {}, action) {
     case SET_USER_WALET:
       return { ...state, walet: action.walet };
     case MAKE_EXCHANGE:
-      return makeExchange(state.walet, action.exchange);
+      return makeExchange(state, action.exchange);
     default:
       return state;
   }
 }
 
-function makeExchange(walet, {sell, buy}) {
-  const solt = makeSell(walet, { sellName, sellAmount });
-  const bought = makeSell(walet, { buyName, buyAmount });
-  const walet = { ...walet, ...solt, ...bought };
+function makeExchange(state, {sell, buy}) {
+  let walet = state.walet;
+  const solt = makeSell(walet, { name: sell.name, amount: sell.amount });
+  const bought = makeBuy(walet, { name: buy.name, amount: buy.amount });
+  walet = { ...walet, ...solt, ...bought };
   return { ...state, walet };
 }
 
-function makeSell(walet, { sellName, sellAmount }) {
-  return { [sellName]: walet[sellName] - sellAmount };
+function makeSell(walet, { name, amount }) {
+  return { [name]: walet[name] - amount };
 }
 
-function makeBuy(walet, { buyName, buyAmount }) {
-  return { [buyName]: walet[buyName] + buyAmount };
+function makeBuy(walet, { name, amount }) {
+  return { [name]: walet[name] + amount };
 }
