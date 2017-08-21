@@ -44,10 +44,6 @@
   padding: 0;
 }
 
-.from-currency-input input:focus {
-  outline: none;
-}
-
 .to-currency {
   background-color: rgba(0, 0, 0, 0.2);
 }

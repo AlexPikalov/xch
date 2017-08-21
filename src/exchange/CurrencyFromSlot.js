@@ -2,15 +2,17 @@ import React, { Component } from 'react';
 
 import Currency from './Currency';
 
+const MIN_INPUT_SIZE_PX = 2;
+
 export default class CurrencyFromSlot extends Component {
   componentWillMount() {
-    this.setState({inputSize: '0px'})
+    const minSize = `${MIN_INPUT_SIZE_PX}px`;
+    this.setState({inputSize: minSize})
   }
 
   get inputSize() {
     const el = this.fakeInputEl;
-    const minSize = 2;
-    return `${el ? el.offsetWidth || minSize : minSize}px`;
+    return `${el ? el.offsetWidth || MIN_INPUT_SIZE_PX : MIN_INPUT_SIZE_PX}px`;
   }
 
   fakeInput() {
@@ -40,7 +42,7 @@ export default class CurrencyFromSlot extends Component {
       <div className="currency-slot-container from-currency"
         onClick={() => this.input.focus()}>
 
-        {this.fakeInput()}
+        { this.fakeInput() }
 
         <Currency
           currencyName={this.props.currencyName}
@@ -48,7 +50,7 @@ export default class CurrencyFromSlot extends Component {
         />
 
         <div className="from-currency-input">
-          {this.props.sellCurrencyAmount ? '-' : ''}
+          { this.props.sellCurrencyAmount ? '-' : '' }
           <input type="number"
             autoFocus={true}
             ref={input => this.input = input}

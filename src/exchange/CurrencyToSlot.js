@@ -13,7 +13,12 @@ export default class CurrencyToSlot extends Component {
     return `+${fomatCurrencyValue(this.props.exchangeAmount, currencySymbol)}`;
   }
 
-  ratio() {
+  resultStyles() {
+    const visibility = this.props.exchangeAmount ? 'visible' : 'hidden';
+    return { visibility };
+  }
+
+  renderRatio() {
     return (
       <div className="currencies-ratio">
           {this.currencySymbols[this.props.currencyName] || ''}1
@@ -21,11 +26,6 @@ export default class CurrencyToSlot extends Component {
           {fomatCurrencyValue(this.props.currencyRatio, this.props.currencyFromName)}
       </div>
     );
-  }
-
-  resultStyles() {
-    const visibility = this.props.exchangeAmount ? 'visible' : 'hidden';
-    return { visibility };
   }
 
   render() {
@@ -43,7 +43,7 @@ export default class CurrencyToSlot extends Component {
             style={this.resultStyles()}>
             {this.formattedResult}
           </div>
-          {this.ratio()}
+          { this.renderRatio() }
         </div>
 
       </div>

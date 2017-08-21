@@ -9,9 +9,9 @@ export function RateDropdown(props) {
   return (
     <div className="rate-dropdown"
       onClick={() => alert('Not Implemented!')}>
-        {currencySymbols[props.currencyName] || ''}1
+        { currencySymbols[props.currencyName] || '' }1
         =
-        {fomatCurrencyValue(props.currencyRatio, props.currencyFromName)}
+        { fomatCurrencyValue(props.currencyRatio, props.currencyFromName) }
         { !!smallNums && <small>{smallNums}</small> }
         <i className="dropdown-caret fa fa-caret-down"></i>
     </div>

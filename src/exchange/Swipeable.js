@@ -9,10 +9,10 @@ export function Swipeable(props) {
   return (
     <div className="swipeable-views-container">
       <SwipeableViews index={index} onChangeIndex={newIdx => props.onChange(newIdx)}>
-        {props.children}
+        { props.children }
       </SwipeableViews>
       <div className="dots-container">
-        {props.currencies.map(c => <Dot key={c} active={c === props.currencyName}/>)}
+        { props.currencies.map(c => <Dot key={c} active={c === props.currencyName}/>) }
       </div>
     </div>
   );
